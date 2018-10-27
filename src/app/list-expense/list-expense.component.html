@@ -1,0 +1,124 @@
+<p-table #dt [columns]="cols" [value]="expenses" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20,50]"
+  [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadExpensesLazy($event)" selectionMode="single"
+  [(selection)]="selectedExpense" dataKey="date" (onRowSelect)="onRowSelect($event)" [loading]="loading">
+
+  <!-- ======================================================================= -->
+  <!-- CAPTION -->
+  <!-- ======================================================================= -->
+  <ng-template pTemplate="caption">
+    <span>
+      <div style="text-align:center">
+        <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add"></button>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;Expenses&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="12" placeholder="Search Item" (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width:auto">
+
+      </div>
+    </span>
+  </ng-template>
+
+  <!-- ======================================================================= -->
+  <!-- HEADERS -->
+  <!-- ======================================================================= -->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns; let j = index;" [ngStyle]="col.Style" [pSortableColumn]="col.field">
+        {{col.header}}<p></p>
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+    </tr>
+
+  </ng-template>
+
+
+  <!-- ===================================================================== -->
+  <!-- TABLE BODY -->
+  <!-- ===================================================================== -->
+  <ng-template pTemplate="body" let-expense let-columns="columns">
+    <tr [pSelectableRow]="expense">
+      <td *ngFor="let col of columns; let i = index;" [ngStyle]="col.Style">
+
+        {{ col.type ? col.type.transform(expense[col.field], col.arg1, col.arg2, col.arg3) : expense[col.field] }}
+
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+
+<!-- ======================================================================= -->
+<!-- MODAL POPUP -->
+<!-- ======================================================================= -->
+<p-dialog [header]="modalTitle" [(visible)]="displayDialog" [responsive]="false" showEffect="fade" [modal]="true"
+  [width]="400" [positionTop]="20">
+  <form #expenseForm="ngForm" (ngSubmit)="save(expense)">
+
+    <div class="ui-g ui-fluid" *ngIf="expense">
+
+      <!-- ================================================================= -->
+      <div class="ui-g-12">
+        <div class="ui-g-3">
+          <label for="date">Date</label>
+        </div>
+        <div class="ui-g-9">
+          <p-calendar [(ngModel)]="expense.date" name="date" id="date" dateFormat="dd.mm.yy" [inline]="false"
+            [showIcon]="true"></p-calendar>
+        </div>
+      </div>
+      <!-- ======================================================================= -->
+      <div class="ui-g-12">
+        <div class="ui-g-3">
+          <label for="category">Category</label>
+        </div>
+
+        <div class="ui-g-5">
+          <p-dropdown id="category" name="category" [(ngModel)]="expense.category" [editable]="true"
+          [filter]="true" [showClear]="true"
+          placeholder="Add or Select a Category"
+            [options]="categories" [style]="{'width':'256px'}" [autoWidth]="false" required></p-dropdown>
+        </div>
+      </div>
+
+      <!-- ======================================================================= -->
+      <div class="ui-g-12">
+        <div class="ui-g-3">
+          <label for="item">Item</label>
+        </div>
+        <div class="ui-g-9">
+          <input pInputText id="item" name="item" [(ngModel)]="expense.item" />
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <div class="ui-g-12">
+        <div class="ui-g-3">
+          <label for="price">Price</label>
+        </div>
+        <div class="ui-g-9">
+          <input pInputText id="price" type="number" name="price" [(ngModel)]="expense.price" required />
+        </div>
+      </div>
+
+      <!-- <p>Selected Category: {{expense | json}}</p> -->
+    </div>
+    <br>
+    <br>
+    <br>
+
+    <!-- BUTTONS -->
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix p-grid p-justify-between">
+        <div *ngIf="!newExpense">
+          <button type="button" pButton icon="far fa-trash-alt" label="Delete" class="ui-button-danger" (click)="deleteExpense(expense)"></button>
+        </div>
+        <button type="button" pButton icon="fas fa-times" label="Cancel" class="ui-button-secondary" (click)="closeDialog()"></button>
+
+        <button type="submit" pButton icon="fas fa-check" label="Save" [disabled]="expenseForm.invalid"></button>
+      </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
