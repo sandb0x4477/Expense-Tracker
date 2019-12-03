@@ -1,7 +1,7 @@
 # Expense Tracker
 
 
-[Live Demo](https://www.alittlebitofcode.site/expensetracker/)
+[Live Demo](https://www.alittlebitofcode.website/expensetracker/)
 
 #### CRUD example with PrimeNG datatable with Lazyloading
 
